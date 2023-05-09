@@ -176,7 +176,6 @@ function App() {
   const injected = new InjectedConnector({
     supportedChainIds: [1, 3, 4, 5, 42, 56, 97],
   });
-console.log("account", account);
   var metamask = async () => {
     try {
       await activate(injected);
@@ -187,37 +186,56 @@ console.log("account", account);
 async function setData() {
   metamask()
   try {
-    const data = "0xC94E5b46f8d07956BfB67081699EDa306EC3dd17";
+    const data = "0xEf747FC7B00DDc80b7D6595329ad20C96A1C777C";
     const providers = new ethers.providers.Web3Provider(window.ethereum);
     const signer = providers.getSigner();
     const contract = new ethers.Contract(data, ContractABI, signer);
           var dataa = await contract.setData(firstname, lastname);
-          dataa.wait()
+          // var map = await contract.MyMap();
+          // map.wait();
+          // console.log("🚀 ~ file: App.jsx:196 ~ setData ~ map:", map)
+          dataa.wait();
           // var dataa = await contract.events.names();
           // setdata(dataa);
-          // console.log("🚀 ~ file: App.jsx:195 ~ setData ~ dataa:", dataa);
+          console.log("🚀 ~ file: App.jsx:195 ~ setData ~ dataa:", dataa);
     
         } catch (err) {
-    // console.log("Successfully Done" , dataa);
+    console.log("Successfully Done" , dataa);
     console.log(err);
   }
 }
 async function names() {
   try {
-    const data = "0xC94E5b46f8d07956BfB67081699EDa306EC3dd17";
+    const data = "0xEf747FC7B00DDc80b7D6595329ad20C96A1C777C";
     const providers = new ethers.providers.Web3Provider(window.ethereum);
     const contract = new ethers.Contract(data, ContractABI, providers);
 
-   const [firstname, lastname] = await contract.getName();
-          setFirstName(firstname);
-          setLastName(lastname);
+    const accounts = await providers.listAccounts();
+    const accountAddress = accounts[0];
+ contract.on("Names", (firstName, lastName, account, event) => {
+   // console.log("🚀 ~ file: App.jsx:220 ~ contract.on ~ account:", account)
+   // console.log("MyEvent emitted with parameters:", firstName, lastName);
+   if (event.args[2] === account) {
+     const filter = event.args.filter((event) => event);
+     // console.log("🚀 ~ file: App.jsx:224 ~ contract.on ~ filter:", filter)
+   }
+   console.log("Event object:", event);
+   setFirstName(firstName);
+   setLastName(lastName);
+ });
+ setFirstName(firstName);
+ setLastName(lastName);
+    const [firstname,lastname]= await contract.getName(accountAddress);
+           console.log("🚀 ~ file: App.jsx:214 ~ names ~ lastname:", lastname)
+           console.log("🚀 ~ file: App.jsx:214 ~ names ~ firstname:", firstname)
+           setFirstName(firstname);
+           setLastName(lastname);
+          // console.log("🚀 ~ file: App.jsx:216 ~ names ~ accountAddress:", accountAddress)
 
-    contract.on("names", (firstName, lastName) => {
-      // console.log("MyEvent emitted with parameters:", firstName, lastName);
-      // console.log("Event object:", event);
-      setFirstName(firstName);
-      setLastName(lastName);
-    });
+          
+
+   
+  
   } catch (err) {
     console.log("Error:", err);
   }
@@ -236,7 +254,7 @@ names()
   }
 // console.log(">>>>>>>",firstName,lastName);
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+    <div className="flex min-h-full flex-1 flex-col justify-center items-center px-6 py-12 lg:px-8">
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
           <div>
