@@ -170,13 +170,14 @@ function App() {
 
   const [firstName, setFirstName] = useState();
   const [lastName, setLastName] = useState();
-  const [data, setdata] = useState();
   const { activate, deactivate, active, account, chainId } = useWeb3React();
 
   const injected = new InjectedConnector({
     supportedChainIds: [1, 3, 4, 5, 42, 56, 97],
   });
   var metamask = async () => {
+    console.log("activee",active);
+
     try {
       await activate(injected);
     } catch (error) {
@@ -215,10 +216,7 @@ async function names() {
  contract.on("Names", (firstName, lastName, account, event) => {
    // console.log("🚀 ~ file: App.jsx:220 ~ contract.on ~ account:", account)
    // console.log("MyEvent emitted with parameters:", firstName, lastName);
-   if (event.args[2] === account) {
-     const filter = event.args.filter((event) => event);
-     // console.log("🚀 ~ file: App.jsx:224 ~ contract.on ~ filter:", filter)
-   }
+  
    console.log("Event object:", event);
    setFirstName(firstName);
    setLastName(lastName);
